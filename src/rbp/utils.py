@@ -1,7 +1,7 @@
 import torch
 from torch import optim
 import adabound
-from apex import amp
+# from apex import amp
 from collections import OrderedDict
 import os
 
@@ -45,7 +45,7 @@ def regularize_loss_deepsea(net, loss, l1=1e-8, l2=5e-7, l3=0.9):
     return net, loss
 
 
-def compile_paths(outdir, modelparams, loss_scalers, useRegConv=False):
+def compile_paths(outdir, modelparams, loss_scalers=[1, 1], useRegConv=False):
     adname = "pythiaModel"
     for key, value in modelparams.items():
         adname += "_{}-{}".format(
@@ -56,9 +56,13 @@ def compile_paths(outdir, modelparams, loss_scalers, useRegConv=False):
         adname += "_noFixedConv"
     logdir = os.path.join(outdir, adname)
     os.makedirs(logdir, exist_ok=True)
+    try:
+        job_id = os.environ["SLURM_JOB_ID"]
+    except Exception:
+        job_id = "NA"
     chkdir = os.path.join(
         "/checkpoint/mkarimza",
-        os.environ["SLURM_JOB_ID"])
+        job_id)
     if not os.path.exists(chkdir):
         chkdir = os.path.join(logdir, "checkpoints")
         os.makedirs(chkdir, exist_ok=True)
@@ -126,8 +130,8 @@ def load_model_from_file(chkpath, net, optimizer):
             k = k.replace('module.', '')
             new_state_dict[k] = v
         net.load_state_dict(new_state_dict)
-        optimizer.load_state_dict(checkpoint['optimizer'])
-        amp.load_state_dict(checkpoint['amp'])
+        # optimizer.load_state_dict(checkpoint['optimizer'])
+        # amp.load_state_dict(checkpoint['amp'])
         print("Successfully loaded the model")
     else:
         net = torch.load(chkpath)

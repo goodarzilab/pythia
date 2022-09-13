@@ -6,7 +6,11 @@ Run the following commands to install the dependencies:
 ```
 conda create -n pytorch -c pytorch pytorch=1.4.0
 pip install apex
+pip install adabound
+conda install -c bioconda ushuffle
 conda install -c conda-forge transformers
+conda install -c anaconda scikit-learn
+conda install -c anaconda seaborn
 ```
 
 
@@ -32,6 +36,16 @@ If using a GPU, make sure `nvidia-smi` returns a meaningful output such as:
 |=============================================================================|
 |  No running processes found                                                 |
 +-----------------------------------------------------------------------------+
+```
+
+
+To run the notebooks, also add:
+
+
+```
+conda install -c anaconda ipykernel
+python -m ipykernel install --user --name=pytorch
+jupyter notebook
 ```
 
 

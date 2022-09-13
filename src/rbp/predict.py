@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-from apex import amp
+# from apex import amp
 from datetime import datetime
 import joblib
 import numpy as np
@@ -280,9 +280,9 @@ def save_model(net, optimizer, dictpaths):
         [dictpaths["modelpath"]]
     for modelpath in curpaths:
         checkpoint = {
-            'model': net.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'amp': amp.state_dict()
+            'model': net.state_dict()
+            # 'optimizer': optimizer.state_dict(),
+            # 'amp': amp.state_dict()
         }
         torch.save(
             checkpoint,

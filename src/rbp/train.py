@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from apex import amp
 from datetime import datetime
 import joblib
 from model import PythiaModel
@@ -19,7 +18,6 @@ from utils import regularize_loss_deepsea
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-opt_level = 'O1'
 
 
 class RMSELoss(nn.Module):
@@ -99,7 +97,7 @@ def load_model(inputsize, outdir, optimizer, lr, chkpaths,
     print("{} has {} learnable parameters".format(model_name, n_params))
     optimizer = get_optimizer(
         optimizer, net, lr)
-    net, optimizer = amp.initialize(net, optimizer, opt_level=opt_level)
+    # net, optimizer = amp.initialize(net, optimizer, opt_level=opt_level)
     for eachpath in chkpaths:
         if os.path.exists(eachpath):
             net, optimizer = load_model_from_file(eachpath, net, optimizer)
@@ -284,8 +282,9 @@ def train_model(joblibpath, dictpaths, net, optimizer,
             if model_name == "DeepSEA":
                 net, adce = regularize_loss_deepsea(
                     net, adce, l1=1e-8, l2=5e-7, l3=0.9)
-            with amp.scale_loss(adce, optimizer) as loss:
-                loss.backward()
+            # with amp.scale_loss(adce, optimizer) as loss:
+            #     loss.backward()
+            adce.backward()
             if torch.isnan(adce):
                 print("{} {}".format(idx_batch, adce))
                 raise ValueError("NA loss")
@@ -306,9 +305,9 @@ def train_model(joblibpath, dictpaths, net, optimizer,
         if newloss < best_loss:
             best_loss = newloss
             checkpoint = {
-                'model': net.state_dict(),
-                'optimizer': optimizer.state_dict(),
-                'amp': amp.state_dict()
+                'model': net.state_dict()
+                # 'optimizer': optimizer.state_dict(),
+                # 'amp': amp.state_dict()
             }
             torch.save(
                 checkpoint,
@@ -324,9 +323,9 @@ def save_model(net, optimizer, dictpaths):
         [dictpaths["modelpath"]]
     for modelpath in curpaths:
         checkpoint = {
-            'model': net.state_dict(),
-            'optimizer': optimizer.state_dict(),
-            'amp': amp.state_dict()
+            'model': net.state_dict()
+            # 'optimizer': optimizer.state_dict(),
+            # 'amp': amp.state_dict()
         }
         torch.save(
             checkpoint,
