@@ -364,11 +364,7 @@ def conv1_dim(lin, kernel, pad=1, dil=1, stride=1):
 
 def test_model(inputsize, num_rbps=1, use_fixedConv=True,
                kernel_size=16, trainable=False):
-    if torch.cuda.is_available():
-        device = torch.device("cuda")
-        print("Using gpu")
-    else:
-        device = torch.device("cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("i {} n {} fixed {} k {} trainable {}".format(
             inputsize, num_rbps, use_fixedConv, kernel_size,
             trainable))
