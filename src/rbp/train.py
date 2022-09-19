@@ -70,7 +70,6 @@ def load_model(inputsize, outdir, optimizer, lr, chkpaths,
     if model_name == "Pythia":
         net = PythiaModel(
             inputsize=inputsize,
-            num_rbps=1,
             kernel_size=kernel_size,
             use_fixedConv=np.logical_not(useRegConv),
             dil_start=dil_start, dil_end=dil_end,

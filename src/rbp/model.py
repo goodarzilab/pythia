@@ -239,17 +239,18 @@ class DeepBind(nn.Module):
 
 class PythiaModel(nn.Module):
     def __init__(self, init_channels=64, kernel_size=16,
-                 num_rbps=1, inputsize=50,
+                 inputsize=50,
                  use_fixedConv=True, dp=0.25, trainable=False,
                  dil_start=5, dil_end=24, bulge_size=2,
-                 binarize_fd=False, disable_conv_dp=False):
+                 binarize_fd=False, disable_conv_dp=False,
+                 num_outputs=2):
         super(PythiaModel, self).__init__()
         self.disable_conv_dp = disable_conv_dp
         self.use_fixedConv = use_fixedConv
         self.init_channels = init_channels
         self.kernel_size = kernel_size
-        self.num_rbps = num_rbps
         self.inputsize = inputsize
+        self.num_outputs = num_outputs
         self.out_channel_fd = int(
             (dil_end - dil_start + 1) * 6 * bulge_size * 3)
         # Dilating layers
@@ -298,7 +299,7 @@ class PythiaModel(nn.Module):
             64, 32)
         self.dense_relu_2 = nn.ReLU()
         self.dense_3 = nn.Linear(
-            32, 2)
+            32, self.num_outputs)
 
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
@@ -362,14 +363,14 @@ def conv1_dim(lin, kernel, pad=1, dil=1, stride=1):
     return lout
 
 
-def test_model(inputsize, num_rbps=1, use_fixedConv=True,
+def test_model(inputsize, use_fixedConv=True,
                kernel_size=16, trainable=False):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    print("i {} n {} fixed {} k {} trainable {}".format(
-            inputsize, num_rbps, use_fixedConv, kernel_size,
+    print("i {} fixed {} k {} trainable {}".format(
+            inputsize, use_fixedConv, kernel_size,
             trainable))
     net = PythiaModel(
-        inputsize=inputsize, num_rbps=num_rbps,
+        inputsize=inputsize,
         kernel_size=kernel_size,
         use_fixedConv=use_fixedConv,
         trainable=trainable)
