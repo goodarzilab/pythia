@@ -122,6 +122,7 @@ def get_optimizer(optname, net, lr):
 
 def load_model_from_file(chkpath, net, optimizer):
     if torch.cuda.is_available():
+        from apex import amp
         checkpoint = torch.load(chkpath)
         print("Successfully loaded {}".format(chkpath))
         state_dict = checkpoint['model']
@@ -130,8 +131,8 @@ def load_model_from_file(chkpath, net, optimizer):
             k = k.replace('module.', '')
             new_state_dict[k] = v
         net.load_state_dict(new_state_dict)
-        # optimizer.load_state_dict(checkpoint['optimizer'])
-        # amp.load_state_dict(checkpoint['amp'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        amp.load_state_dict(checkpoint['amp'])
         print("Successfully loaded the model")
     else:
         net = torch.load(chkpath)

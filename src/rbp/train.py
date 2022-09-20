@@ -18,6 +18,9 @@ from utils import regularize_loss_deepsea
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    from apex import amp
+    opt_level = "O1"
 
 
 class RMSELoss(nn.Module):
@@ -96,7 +99,8 @@ def load_model(inputsize, outdir, optimizer, lr, chkpaths,
     print("{} has {} learnable parameters".format(model_name, n_params))
     optimizer = get_optimizer(
         optimizer, net, lr)
-    # net, optimizer = amp.initialize(net, optimizer, opt_level=opt_level)
+    if torch.cuda.is_available():
+        net, optimizer = amp.initialize(net, optimizer, opt_level=opt_level)
     for eachpath in chkpaths:
         if os.path.exists(eachpath):
             net, optimizer = load_model_from_file(eachpath, net, optimizer)
@@ -281,9 +285,11 @@ def train_model(joblibpath, dictpaths, net, optimizer,
             if model_name == "DeepSEA":
                 net, adce = regularize_loss_deepsea(
                     net, adce, l1=1e-8, l2=5e-7, l3=0.9)
-            # with amp.scale_loss(adce, optimizer) as loss:
-            #     loss.backward()
-            adce.backward()
+            if torch.cuda.is_available():
+                with amp.scale_loss(adce, optimizer) as loss:
+                    loss.backward()
+            else:
+                adce.backward()
             if torch.isnan(adce):
                 print("{} {}".format(idx_batch, adce))
                 raise ValueError("NA loss")
@@ -294,13 +300,14 @@ def train_model(joblibpath, dictpaths, net, optimizer,
             del train1, resp_b, pred_m
             torch.cuda.empty_cache()
         loss_ce = loss_ce / idx_batch
-        printstr = "Epoch {}: Loss: {}".format(
-            epoch, loss_ce)
-        print(printstr)
         tune_df, train_df = assess_performance(
             net, tensordict, logpath, epoch + 1,
             MINIBATCH)
         newloss = list(tune_df["BCE.Tune"])[0]
+        printstr = "Epoch {}: Training Loss: {}".format(
+            epoch, loss_ce) +\
+            " Tuning loss: {}".format(newloss)
+        print(printstr)
         if newloss < best_loss:
             best_loss = newloss
             checkpoint = {
@@ -308,6 +315,9 @@ def train_model(joblibpath, dictpaths, net, optimizer,
                 # 'optimizer': optimizer.state_dict(),
                 # 'amp': amp.state_dict()
             }
+            if torch.cuda.is_available():
+                checkpoint["optimizer"] = optimizer.state_dict()
+                checkpoint["amp"] = amp.state_dict()
             torch.save(
                 checkpoint,
                 dictpaths["bestpath"])
@@ -326,6 +336,9 @@ def save_model(net, optimizer, dictpaths):
             # 'optimizer': optimizer.state_dict(),
             # 'amp': amp.state_dict()
         }
+        if torch.cuda.is_available():
+            checkpoint["optimizer"] = optimizer.state_dict()
+            checkpoint["amp"] = amp.state_dict()
         torch.save(
             checkpoint,
             modelpath)
