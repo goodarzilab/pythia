@@ -1,0 +1,88 @@
+# BEACON benchmark leaderboard (published baseline model results).
+# Pythia is intentionally excluded here; beacon_benchmark_plot.R loads
+# Pythia's own numbers separately from that task's test-set metrics_best.json.
+"CNN":
+  SSP_F1_percent: 49.95
+  CMP_P.L_percent: 43.89
+  DMP_R2_percent: 27.76
+  SSI_R2_percent: 34.36
+"ResNet":
+  SSP_F1_percent: 57.26
+  CMP_P.L_percent: 59.59
+  DMP_R2_percent: 30.26
+  SSI_R2_percent: 37.74
+"LSTM":
+  SSP_F1_percent: 58.61
+  CMP_P.L_percent: 40.41
+  DMP_R2_percent: 44.77
+  SSI_R2_percent: 35.44
+"RNA-FM":
+  SSP_F1_percent: 68.5
+  CMP_P.L_percent: 47.56
+  DMP_R2_percent: 51.45
+  SSI_R2_percent: 42.36
+"RNABERT":
+  SSP_F1_percent: 57.27
+  CMP_P.L_percent: 45.21
+  DMP_R2_percent: 48.19
+  SSI_R2_percent: 31.62
+"RNA-MSM":
+  SSP_F1_percent: 57.98
+  CMP_P.L_percent: 57.26
+  DMP_R2_percent: 37.49
+  SSI_R2_percent: 39.22
+"Splice-H510":
+  SSP_F1_percent: 64.93
+  CMP_P.L_percent: 45.8
+  DMP_R2_percent: 55.56
+  SSI_R2_percent: 38.91
+"Splice-MS510":
+  SSP_F1_percent: 43.24
+  CMP_P.L_percent: 52.64
+  DMP_R2_percent: 10.27
+  SSI_R2_percent: 38.58
+"Splice-MS1024":
+  SSP_F1_percent: 68.26
+  CMP_P.L_percent: 47.32
+  DMP_R2_percent: 55.89
+  SSI_R2_percent: 39.22
+"UTR-LM-MRL":
+  SSP_F1_percent: 59.71
+  CMP_P.L_percent: 45.51
+  DMP_R2_percent: 55.21
+  SSI_R2_percent: 39.52
+"UTR-LM-TE&EL":
+  SSP_F1_percent: 59.57
+  CMP_P.L_percent: 60.32
+  DMP_R2_percent: 54.94
+  SSI_R2_percent: 40.15
+"UTRBERT-3mer":
+  SSP_F1_percent: 60.37
+  CMP_P.L_percent: 51.03
+  DMP_R2_percent: 50.95
+  SSI_R2_percent: 34.31
+"UTRBERT-4mer":
+  SSP_F1_percent: 59.41
+  CMP_P.L_percent: 44.91
+  DMP_R2_percent: 47.77
+  SSI_R2_percent: 33.22
+"UTRBERT-5mer":
+  SSP_F1_percent: 47.92
+  CMP_P.L_percent: 44.71
+  DMP_R2_percent: 48.67
+  SSI_R2_percent: 31.27
+"UTRBERT-6mer":
+  SSP_F1_percent: 38.56
+  CMP_P.L_percent: 51.56
+  DMP_R2_percent: 50.02
+  SSI_R2_percent: 29.93
+"BEACON-B":
+  SSP_F1_percent: 64.18
+  CMP_P.L_percent: 60.81
+  DMP_R2_percent: 56.28
+  SSI_R2_percent: 38.78
+"BEACON-B512":
+  SSP_F1_percent: 58.75
+  CMP_P.L_percent: 61.2
+  DMP_R2_percent: 56.82
+  SSI_R2_percent: 39.13

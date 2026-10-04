@@ -1,0 +1,141 @@
+# Consolidated hyperparameters for reproducing the deployed BEACON
+# structural-task results (SSP, SSI, CMP, DMP).
+#
+# Paths are resolved by pythia_beacon_structural_tasks.py relative to the
+# package directory (src/pythia/, two levels up from this file) unless
+# given as absolute paths. Edit the `common` section and each task's
+# `data` section for your environment -- these placeholder paths are not
+# shipped with this repository (see the top-level README for how to obtain
+# or generate each dataset).
+
+common:
+  output_base: output/beacon_results
+  figure_dir: output/beacon_figures
+  num_workers: 4
+  seed: 42
+
+tasks:
+  ssp:
+    description: "Secondary Structure Prediction"
+    script: train_beacon.py
+    task_arg: ssp
+    output_subdir: ssp
+    data:
+      csv: /path/to/bpRNA/bpRNA.csv
+    training:
+      max_len: 512
+      max_epochs: 300
+      batch_size: 4
+      batch_eval: 4
+      grad_accum: 2
+      lr: 3e-4
+      weight_decay: 0
+      warmup_epochs: 3
+      patience: 10
+    model:
+      dil_start: 5
+      dil_end: 24
+      bulge_size: 2
+      dropout: 0.15
+      hidden_dim: 384
+      num_res_layers: 8
+      dist_enc_dim: 64
+      arm1_widths: [128, 128, 128]
+      arm2_widths: [256, 128, 128]
+
+  ssi:
+    description: "Structural Score Imputation"
+    script: train_beacon.py
+    task_arg: ssi
+    output_subdir: ssi
+    data:
+      train_csv: /path/to/StructuralScoreImputation/train.csv
+      val_csv: /path/to/StructuralScoreImputation/val.csv
+      test_csv: /path/to/StructuralScoreImputation/test.csv
+    training:
+      max_len: 440
+      max_epochs: 100
+      batch_size: 64
+      batch_eval: 128
+      grad_accum: 1
+      lr_feat: 7.071e-4
+      lr_head: 2.598e-4
+      weight_decay: 8.864e-3
+      warmup_epochs: 20
+      patience: 12
+      loss_fn: l1
+      grad_clip: 1.152
+    model:
+      hidden_dim: 384
+      num_res_layers: 10
+      arm1_widths: [128, 128, 128]
+      arm2_widths: [256, 128, 128]
+      dil_start: 2
+      dil_end: 36
+      bulge_size: 4
+      dropout: 0.307
+
+  cmp:
+    description: "Contact Map Prediction"
+    script: train_beacon.py
+    task_arg: cmp
+    output_subdir: cmp
+    data:
+      train_csv: /path/to/ContactMap/train.csv
+      val_csv: /path/to/ContactMap/val.csv
+      contact_map_dir: /path/to/ContactMap/contact_map
+      test_splits: [RFAM19, DIRECT, test]
+    training:
+      max_len: 1024
+      max_epochs: 100
+      batch_size: 1
+      batch_eval: 1
+      grad_accum: 8
+      lr: 5e-5
+      weight_decay: 0.01
+      warmup_epochs: 50
+      patience: 5
+      min_separation: 23
+    model:
+      dil_start: 5
+      dil_end: 24
+      bulge_size: 2
+      dropout: 0.15
+      hidden_dim: 320
+      num_res_layers: 7
+      dist_enc_dim: 64
+      arm1_widths: [128, 96, 64]
+      arm2_widths: [192, 128, 64]
+
+  dmp:
+    description: "Distance Map Prediction"
+    script: train_beacon.py
+    task_arg: dmp
+    output_subdir: dmp
+    data:
+      train_csv: /path/to/DistanceMap/train.csv
+      val_csv: /path/to/DistanceMap/val.csv
+      distance_dir: /path/to/DistanceMap/distance_map
+      test_splits: [RFAM19, DIRECT, test]
+    training:
+      max_len: 1024
+      max_epochs: 100
+      batch_size: 1
+      batch_eval: 1
+      grad_accum: 8
+      lr: 1e-4
+      weight_decay: 1e-3
+      warmup_epochs: 20
+      patience: 10
+      min_epochs: 60
+      huber_delta: 0.3
+    model:
+      dil_start: 5
+      dil_end: 24
+      bulge_size: 2
+      dropout: 0.1
+      hidden_dim: 256
+      num_res_layers: 9
+      dist_enc_dim: 128
+      arm1_widths: [192, 192, 128]
+      arm2_widths: [256, 256, 128]

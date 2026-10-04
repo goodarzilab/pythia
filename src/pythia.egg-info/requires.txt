@@ -1,0 +1,13 @@
+torch==2.5.1
+numpy
+pandas
+scikit-learn
+scipy
+pydantic>=2.0
+matplotlib
+seaborn
+pytorch-lightning>=2.0
+jupyter
+captum>=0.8.0
+nvidia-cudnn-cu12>=9.1.0.70
+pyyaml

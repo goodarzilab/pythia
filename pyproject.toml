@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pythia"
+version = "0.1.0"
+description = "Pythia: RNA sequence analysis toolkit for RBP and structural prediction"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+maintainers = [
+    { name = "Mehran Karimzadeh", email = "mehran.karimzade@gmail.com" },
+]
+dependencies = [
+    "torch==2.5.1",
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+    "pydantic>=2.0",
+    "matplotlib",
+    "seaborn",
+    "pytorch-lightning>=2.0",
+    "jupyter",
+    "captum>=0.8.0",
+    "nvidia-cudnn-cu12>=9.1.0.70",
+    "pyyaml",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["pythia*"]
+
+[tool.black]
+line-length = 88
+target-version = ["py39"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.pylint.messages_control]
+disable = ["C0114", "C0115", "C0116", "R0903"]
